@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f3ef">
+  <title>Fieldnote | Document intake</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Fieldnote home"><span class="brand-mark"><i></i><i></i><i></i></span><span class="brand-name">fieldnote<span>.</span></span></a>
+      <div class="workspace-label">DOCUMENT WORKSPACE</div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <div class="nav-caption">WORKFLOW</div>
+        <button class="nav-item active" data-view="inbox"><span class="nav-icon inbox-icon"></span><span>Intake queue</span><span class="nav-count" id="queue-count">—</span></button>
+        <button class="nav-item" data-view="review"><span class="nav-icon review-icon"></span><span>Needs review</span><span class="nav-count alert-count" id="review-count">—</span></button>
+        <div class="nav-caption nav-caption-spaced">LIBRARY</div>
+        <button class="nav-item" data-filter="all"><span class="nav-icon files-icon"></span><span>All documents</span></button>
+        <button class="nav-item" data-filter="approved"><span class="nav-icon check-icon"></span><span>Approved</span></button>
+      </nav>
+      <div class="sidebar-bottom"><button class="nav-item settings-button" id="settings-button"><span class="nav-icon settings-icon"></span><span>Settings</span></button></div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar"><div class="breadcrumbs"><span>Documents</span><span class="crumb-separator">/</span><strong>Intake queue</strong></div><div class="topbar-actions"><span class="system-status" id="system-status"><i></i>Checking service</span><button class="icon-button" id="help-button" aria-label="Help" title="Help">?</button></div></header>
+      <div class="page-content">
+        <section class="page-heading"><div><div class="eyebrow"><i></i>DOCUMENT OPERATIONS</div><h1>Intake queue</h1><p class="heading-copy">One clear view of every document, from first pass to final sign-off.</p></div><button class="primary-button" id="add-document"><span class="plus-icon">+</span> Add documents</button></section>
+
+        <section class="metric-strip" aria-label="Queue overview">
+          <article class="metric"><div class="metric-label">IN QUEUE <span class="metric-icon stack-icon"></span></div><div class="metric-value" id="metric-total">—</div><div class="metric-foot"><span>Today</span> <b id="today-count">—</b> added</div></article>
+          <article class="metric"><div class="metric-label">NEEDS ATTENTION <span class="metric-icon alert-icon">!</span></div><div class="metric-value" id="metric-review">—</div><div class="metric-foot"><strong>Below 82%</strong> confidence</div></article>
+          <article class="metric"><div class="metric-label">AVG. CONFIDENCE <span class="metric-icon spark-icon">✳</span></div><div class="metric-value" id="metric-confidence">—<small>%</small></div><div class="metric-foot"><em>↑ Stable</em> extraction quality</div></article>
+          <article class="metric"><div class="metric-label">PAGES IN QUEUE <span class="metric-icon pages-icon">▤</span></div><div class="metric-value" id="metric-pages">—</div><div class="metric-foot"><span>Across all</span> uploaded files</div></article>
+        </section>
+
+        <section class="workbench" aria-label="Document workbench">
+          <div class="queue-panel">
+            <div class="queue-header"><div><h2>Documents <span id="document-total"></span></h2><p>Review extracted data and resolve exceptions</p></div><label class="filter-button filter-control"><span class="filter-symbol">☷</span><span class="sr-only">Filter documents</span><select id="filter-select" aria-label="Filter documents"><option value="all">All documents</option><option value="needs_review">Needs review</option><option value="approved">Approved</option></select></label></div>
+            <div class="queue-toolbar"><label class="search-box"><span class="search-icon"></span><input id="search-input" type="search" placeholder="Search files, fields, policy numbers" aria-label="Search documents"><kbd>Ctrl K</kbd></label><button class="sort-button" id="sort-button" title="Toggle sort order"><span>↕</span> Newest first</button></div>
+            <div class="queue-table-wrap"><table class="queue-table"><thead><tr><th class="file-col">DOCUMENT</th><th>TYPE</th><th>CONFIDENCE</th><th>STATUS</th><th class="date-col">ADDED</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody id="document-list"></tbody></table><div id="empty-state" class="empty-state hidden"><span>↗</span><strong>No matching documents</strong><span>Try another search or filter.</span><button id="empty-upload" class="empty-upload">Add a PDF</button></div></div>
+            <footer class="queue-footer"><span id="queue-summary">Loading documents…</span><span id="queue-updated">Connecting…</span></footer>
+          </div>
+          <aside class="review-panel" id="review-panel"><div class="review-empty"><div class="empty-illustration"><span class="paper-back"></span><span class="paper-front"><i></i><i></i><i></i><b></b></span><span class="magnifier"></span></div><h3>Your review desk</h3><p>Select a document to inspect extracted fields, verify their sources, and approve the record.</p><div class="review-tip"><span>✳</span><span>Low-confidence fields are flagged so your team can focus where it matters.</span></div></div></aside>
+        </section>
+        <footer class="app-footer"><span>FIELDNOTE INTAKE <i>·</i> DOCUMENT WORKSPACE</span></footer>
+      </div>
+    </main>
+  </div>
+  <input id="file-input" type="file" accept="application/pdf,.pdf" multiple hidden>
+  <div class="drop-overlay hidden" id="drop-overlay"><div class="drop-card"><span>⇧</span><strong>Drop PDFs to add to queue</strong><small>PDF documents up to 25 MB</small></div></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog class="app-dialog" id="help-dialog"><form method="dialog"><button class="dialog-close" aria-label="Close">×</button></form><div class="dialog-kicker">FIELDNOTE INTAKE</div><h2>Document workflow</h2><p>Upload a PDF to extract searchable fields and tables. Each field links to its page and source text. Low-confidence results stay in review until approved.</p><div class="dialog-detail"><span>PDF limit</span><strong>25 MB per file</strong></div><div class="dialog-detail"><span>Search shortcut</span><strong>Ctrl K</strong></div><div class="dialog-detail"><span>API reference</span><a href="/docs" target="_blank" rel="noreferrer">Open API docs ↗</a></div></dialog>
+  <dialog class="app-dialog" id="settings-dialog"><form method="dialog"><button class="dialog-close" aria-label="Close">×</button></form><div class="dialog-kicker">RUNTIME CONFIGURATION</div><h2>Settings</h2><p>Live integration status reported by this workspace.</p><div id="settings-details" class="settings-details">Loading configuration…</div></dialog>
+  <dialog class="app-dialog" id="delete-dialog"><div class="dialog-kicker">REMOVE DOCUMENT</div><h2>Delete this PDF?</h2><p id="delete-document-name"></p><div class="dialog-actions"><button class="save-button" id="cancel-delete">Cancel</button><button class="delete-confirm" id="confirm-delete">Delete document</button></div></dialog>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
